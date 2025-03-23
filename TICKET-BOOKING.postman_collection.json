@@ -1,0 +1,351 @@
+{
+	"info": {
+		"_postman_id": "99c0a2b3-8414-4562-b4e0-8eeb23b6b69f",
+		"name": "TICKET-BOOKING",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42773910"
+	},
+	"item": [
+		{
+			"name": "CreateTicket",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idempotencyKey",
+							"value": "{{$timestamp}}",
+							"type": "text"
+						},
+						{
+							"key": "productId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/ticket",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateProduct",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "MOVIE",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "150",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/product",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "shivam",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "shivam@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "shivam@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/user/signup",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"user",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BookTicket",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "ticketId",
+							"value": "9",
+							"type": "text"
+						},
+						{
+							"key": "amount",
+							"value": "100",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/ticket",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetTickets",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/ticket?pageNo=1&pageSize=3",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket"
+					],
+					"query": [
+						{
+							"key": "pageNo",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TicketDetail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/ticket/8",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket",
+						"8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CancelTicket",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/ticket/9",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ticket",
+						"9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();\r",
+							"var token = response.token;\r",
+							"\r",
+							"// Store token in a collection variable\r",
+							"if (token) {\r",
+							"    pm.collectionVariables.set(\"authToken\", token);\r",
+							"    console.log(\"Auth Token set:\", token);\r",
+							"} else {\r",
+							"    console.log(\"No token found in response.\");\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "aman@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "aman@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/user/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "authToken",
+			"value": ""
+		}
+	]
+}
