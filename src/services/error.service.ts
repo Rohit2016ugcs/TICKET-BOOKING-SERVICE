@@ -13,4 +13,7 @@ export class ErrorService {
   serverError(msg?: string) {
     return new HttpErrors.InternalServerError(msg ?? 'internal server error')
   }
+  unauthorized(msg?: string) {
+    return new HttpErrors.Unauthorized(msg ?? 'user unauthorized')
+  }
 }

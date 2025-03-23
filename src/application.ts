@@ -9,6 +9,12 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import {BcryptHasher} from './services/hash.password.bcrypt';
+import {MyUserService} from './services/user.service';
+import {JWTService} from './services/jwt.service';
+import {PasswordHasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
+import {JWTStrategy} from './authentication-strategy/jwt.strategy';
 
 export {ApplicationConfig};
 
@@ -18,6 +24,10 @@ export class TicketBookingSystemApplication extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    //setup bindings
+    this.setupBindings();
+    this.component(AuthenticationComponent);
+    registerAuthenticationStrategy(this, JWTStrategy);
     // Set up the custom sequence
     this.sequence(MySequence);
 
@@ -40,5 +50,13 @@ export class TicketBookingSystemApplication extends BootMixin(
         nested: true,
       },
     };
+  }
+  setupBindings = () => {
+    this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
+    this.bind(PasswordHasherBindings.ROUNDS).to(10);
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+    this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
+    this.bind(TokenServiceBindings.TOKEN_SECRET).to(TokenServiceConstants.TOKEN_SECRET_VALUE);
+    this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE);
   }
 }

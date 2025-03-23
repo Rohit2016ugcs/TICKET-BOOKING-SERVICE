@@ -5,9 +5,11 @@ import {ProductRepository, TicketRepository, UserRepository} from '../repositori
 import {api, del, get, param, patch, post, requestBody, response } from '@loopback/rest';
 import {BOOK_TICKET_BODY, BOOK_TICKET_RESPONSE, CREATE_TICKET_BODY, CREATE_TICKET_RESPONSE, GET_TICKET_RESPONSE, TICKET_DETAIL_RESPONSE} from '../specs';
 import {BookTicket, CreateTicket} from '../types';
-import {service} from '@loopback/core';
+import {inject, service} from '@loopback/core';
 import {ErrorService} from '../services';
 import {TicketStatus} from '../enum/ticket';
+import {authenticate, AuthenticationBindings} from '@loopback/authentication';
+import {UserProfile} from '@loopback/security';
 
 // import {inject} from '@loopback/core';
 
@@ -23,10 +25,12 @@ export class BookingController {
   ) {}
 
   @post('')
+  @authenticate('jwt')
   @response(200, CREATE_TICKET_RESPONSE)
   async createTicket
   (
-    @requestBody(CREATE_TICKET_BODY) body: CreateTicket
+    @requestBody(CREATE_TICKET_BODY) body: CreateTicket,
+    @inject(AuthenticationBindings.CURRENT_USER) user: UserProfile
   ) {
     const { idempotencyKey, productId } = body;
     let transaction;
@@ -40,7 +44,7 @@ export class BookingController {
       )
       ticket = await this.ticketRepository.create({
         idempotencyKey,
-        userId: 1,
+        userId: user.id,
         productId,
         amount: product.price,
         status: TicketStatus.PENDING
@@ -56,9 +60,11 @@ export class BookingController {
   }
 
   @patch('')
+  @authenticate('jwt')
   @response(200, BOOK_TICKET_RESPONSE)
   async bookTicket(
-    @requestBody(BOOK_TICKET_BODY) body: BookTicket
+    @requestBody(BOOK_TICKET_BODY) body: BookTicket,
+    @inject(AuthenticationBindings.CURRENT_USER) user: UserProfile
   ) {
     const { ticketId, amount } = body;
     const ticket = await this.ticketRepository.findById(ticketId);
@@ -78,19 +84,22 @@ export class BookingController {
   }
 
   @get('')
+  @authenticate('jwt')
   @response(200, GET_TICKET_RESPONSE)
   async getUserTicket(
+    @inject(AuthenticationBindings.CURRENT_USER) user: UserProfile,
     @param.query.number('pageNo') pageNo: number,
     @param.query.number('pageSize') pageSize: number
   ){
-    const tickets = await this.ticketRepository.find({ where: { userId: 1 }, limit: pageSize, offset: (pageNo - 1) * pageSize });
+    const tickets = await this.ticketRepository.find({ where: { userId: user.id }, limit: pageSize, offset: (pageNo - 1) * pageSize });
     return tickets
   }
 
   @get('/{ticketId}')
+  @authenticate('jwt')
   @response(200, TICKET_DETAIL_RESPONSE)
   async getTicketDetail(
-    @param.path.number('ticketId') ticketId: number
+    @param.path.number('ticketId') ticketId: number,
   ) {
     const ticket = await this.ticketRepository.findById(ticketId);
     if(!ticket) throw this.errorService.notFound("ticket not found")
@@ -100,6 +109,7 @@ export class BookingController {
 
 
   @del('/{ticketId}')
+  @authenticate('jwt')
   @response(200, TICKET_DETAIL_RESPONSE)
   async cancelTicket(
     @param.path.number('ticketId') ticketId: number
